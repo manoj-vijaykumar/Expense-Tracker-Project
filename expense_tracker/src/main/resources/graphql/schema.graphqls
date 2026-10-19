@@ -1,0 +1,33 @@
+type Expense
+{
+	id:ID!
+	description:String!
+	category:String!
+	amount:Float!
+	date:String!
+}
+
+type Mutation
+{
+	addExpense(description:String!
+	category:String!
+	amount:Float!
+	date:String!):Expense!
+	
+	updateExpense(id:ID!
+	description:String!
+	category:String!
+	amount:Float!
+	date:String!):Expense!
+	
+	deleteExpense(id:ID!):String!
+	
+	
+}
+
+type Query
+{
+	expenses:[Expense!]!
+	getProductbyid(id:ID!):Expense!
+}
+
