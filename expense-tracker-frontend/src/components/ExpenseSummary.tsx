@@ -1,5 +1,5 @@
 
-import React from 'react';
+// import React from 'react';
 
 type ExpenseSummaryProps = {
     total_amount: number,

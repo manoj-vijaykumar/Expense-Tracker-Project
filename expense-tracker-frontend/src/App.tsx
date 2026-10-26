@@ -6,10 +6,10 @@ import './App.css'
 import ExpenseForm from './components/form';
 import {useMutation, useQuery} from "@apollo/client/react";
 import { gql } from '@apollo/client';
-import { Button, Pagination } from 'antd';
-import { CalendarFilled, EyeInvisibleOutlined } from '@ant-design/icons';
+import { Pagination } from 'antd';
+import {EyeInvisibleOutlined } from '@ant-design/icons';
 import ExpenseSummary from './components/ExpenseSummary';
-import { Calendar, Car, Eye, Film, Handbag, HeartPulse, Lightbulb, ShoppingBag, Trash, UtensilsCrossed } from 'lucide-react';
+import { Calendar, Car, Eye, Film, Handbag, Lightbulb, ShoppingBag, Trash, UtensilsCrossed } from 'lucide-react';
 
 const GET_EXPENSES = gql`
   query GetExpenses {
@@ -50,6 +50,14 @@ const App=()=> {
 
 
 
+  type Expenses={
+      id: number,
+      description: string,
+      category: string,
+      amount: number,
+      date: string,
+  }
+  
   type History={
       description: String,
       category: String,
@@ -58,7 +66,9 @@ const App=()=> {
       event_type: String,
       event_time:string;
   }
-
+  type GetExpensesResponse = {
+    expenses: Expenses[];
+  };
   const categoryIcons:Record<string, React.ReactNode> = {
     "Food":<UtensilsCrossed color="white" />,
     "Transport":<Car/>,
@@ -92,7 +102,7 @@ const App=()=> {
   const[currentPage,setCurrentPage]=useState(1);
 
   
-  const { loading, error, data,refetch } = useQuery(GET_EXPENSES);
+  const { loading, error, data,refetch } = useQuery<GetExpensesResponse>(GET_EXPENSES);
   const [addExpense] = useMutation(ADD_EXPENSE,{
     onCompleted: () => {
       refetch();
@@ -108,13 +118,14 @@ const App=()=> {
     }
   })
 
-  console.log(selectedExpenseId);
+  // console.log(selectedExpenseId);
+  
  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const expenses_data: Expenses[] = data.expenses;
-  console.log(data.expenses);
+  const expenses_data: Expenses[] = data?.expenses??[];
+  // console.log(data.expenses);
 
   const handleAddExpense=()=>
   {
@@ -140,7 +151,7 @@ const App=()=> {
   const getExpenseHistory=async(id:number)=>
   {
     setselectedExpenseId(id);
-    const response=await fetch(`http://localhost:8080/api/expenses/${id}/history`);
+    const response=await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/expenses/${id}/history`);
     const historyData=await response.json();
     setHistory(historyData);
     setshowHistory(true);
